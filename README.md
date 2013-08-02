@@ -1,7 +1,8 @@
 # breach-mitigation-rails
 
-Makes Rails applications less susceptible to the BREACH / CRIME
-attacks. See [breachattack.com](http://breachattack.com/) for details.
+Makes Rails 3 and 4 applications less susceptible to the BREACH /
+CRIME attacks. See [breachattack.com](http://breachattack.com/) for
+details.
 
 ## How it works
 
@@ -39,20 +40,23 @@ And then execute:
 
     $ bundle
 
-TODO And then?
+For most Rails apps, that should be enough, but read on for the gory
+details...
 
 ## Gotchas
 
-length padding can screw up etags
-length padding increases your bandwidth, could increase page load
-times
-if you have overridden verified_request? in your app, need to make sure you call +super+
+* The length-hiding middleware adds random text (in the form of an HTML
+  comment) to every page you serve. This can break HTTP caching / ETags for
+  public pages since they are no longer identical on each request.
+* The length-hiding middleware adds up to 2k of text to each page you
+  serve, which means more bandwidth consumed and potentially slower
+  performance.
+* If you have overridden the verified_request? method in your
+  application (likely in ApplicationController) you may need to update
+  it to be compatible with the secret masking code. See
+  `lib/breach_mitigation/railtie.rb` for an example.
 
 ## Contributing
 
 Pull requests are welcome, either to enhance the existing mitigation
 strategies or to add new ways to mitigate against the attack.
-
-## License
-
-MIT - see LICENSE.txt
