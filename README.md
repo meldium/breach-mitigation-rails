@@ -41,6 +41,13 @@ And then execute:
 
 TODO And then?
 
+## Gotchas
+
+length padding can screw up etags
+length padding increases your bandwidth, could increase page load
+times
+if you have overridden verified_request? in your app, need to make sure you call +super+
+
 ## Contributing
 
 Pull requests are welcome, either to enhance the existing mitigation
