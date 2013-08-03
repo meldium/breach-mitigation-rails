@@ -22,12 +22,6 @@ prevent plaintext recovery, but it can slow the attack and it's
 relatively inexpensive to implement. Unlike the CSRF token masking,
 length hiding protects the entire page body from recovery.
 
-In addition to these mitigations, you should check out Twitter's
-[secure_headers](https://github.com/twitter/secureheaders) gem.
-Setting the X-Frame-Options header can make it harder for an attacker
-to carry out this attack (by making it impossible to put your site in
-an iframe).
-
 ## Warning!
 
 BREACH and CRIME are **complicated and wide-ranging attacks**, and this
