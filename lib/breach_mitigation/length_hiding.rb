@@ -39,10 +39,7 @@ module BreachMitigation
       # data itself doesn't need to be strongly random; it just needs
       # to be resistant to compression
       length = SecureRandom.random_number(1024)
-
-      # TODO make this faster
-      junk = ''
-      length.times { junk << ALPHABET.sample }
+      junk = ALPHABET.sample(length).join
 
       "\n<!-- This is a random-length HTML comment: #{junk} -->"
     end
