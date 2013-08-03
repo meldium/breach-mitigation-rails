@@ -21,15 +21,27 @@ module BreachMitigation
 
         masked_token = Base64.strict_decode64(encoded_masked_token)
 
-        return false if masked_token.length != AUTHENTICITY_TOKEN_LENGTH * 2
+        # See if it's actually a masked token or not. In order to
+        # deploy this code, we should be able to handle any unmasked
+        # tokens that we've issued without error.
 
-        # Split the token into the one-time pad and the encrypted
-        # value and decrypt it
-        one_time_pad = masked_token[0...AUTHENTICITY_TOKEN_LENGTH]
-        encrypted_csrf_token = masked_token[AUTHENTICITY_TOKEN_LENGTH..-1]
-        csrf_token = xor_byte_strings(one_time_pad, encrypted_csrf_token)
+        if masked_token.length == AUTHENTICITY_TOKEN_LENGTH
+          # This is actually an unmasked token
+          Rails.logger.warn "WARNING: the client is using an unmasked authenticity token. This is expected if you have just upgraded to masked tokens, but if these messages continue long after the upgrade, then something fishy is going on."
+          masked_token == real_csrf_token(session)
 
-        csrf_token == real_csrf_token(session)
+        elsif masked_token.length == AUTHENTICITY_TOKEN_LENGTH * 2
+          # Split the token into the one-time pad and the encrypted
+          # value and decrypt it
+          one_time_pad = masked_token[0...AUTHENTICITY_TOKEN_LENGTH]
+          encrypted_csrf_token = masked_token[AUTHENTICITY_TOKEN_LENGTH..-1]
+          csrf_token = xor_byte_strings(one_time_pad, encrypted_csrf_token)
+
+          csrf_token == real_csrf_token(session)
+
+        else
+          false # Token is malformed
+        end
       end
 
       private
