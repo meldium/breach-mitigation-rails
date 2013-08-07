@@ -41,7 +41,7 @@ module BreachMitigation
       length = SecureRandom.random_number(MAX_LENGTH)
       junk = ALPHABET.sample(length).join
 
-      "\n<!-- This is a random-length HTML comment: #{junk} -->"
+      "\n<!-- This is a random-length HTML comment: #{junk} -->".html_safe
     end
   end
 end
