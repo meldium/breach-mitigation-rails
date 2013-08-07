@@ -19,7 +19,11 @@ module BreachMitigation
       def valid_authenticity_token?(session, encoded_masked_token)
         return false if encoded_masked_token.nil? || encoded_masked_token.empty?
 
-        masked_token = Base64.strict_decode64(encoded_masked_token)
+        begin
+          masked_token = Base64.strict_decode64(encoded_masked_token)
+        rescue ArgumentError # encoded_masked_token is invalid Base64
+          return false
+        end
 
         # See if it's actually a masked token or not. In order to
         # deploy this code, we should be able to handle any unmasked
