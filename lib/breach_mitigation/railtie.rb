@@ -4,7 +4,7 @@ require 'breach_mitigation/masking_secrets'
 module BreachMitigation
   class Railtie < Rails::Railtie
     initializer "breach-mitigation-rails.insert_middleware" do |app|
-      app.config.middleware.use "BreachMitigation::LengthHiding"
+      app.config.middleware.insert_before 'Rack::ETag', "BreachMitigation::LengthHiding"
     end
   end
 end
