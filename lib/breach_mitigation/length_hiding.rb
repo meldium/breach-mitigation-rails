@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string/output_safety'
+
 module BreachMitigation
   class LengthHiding
     def initialize(app)
