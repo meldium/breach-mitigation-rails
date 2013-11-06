@@ -1,4 +1,5 @@
 require 'base64'
+require 'rack/utils'
 
 module BreachMitigation
   class MaskingSecrets
@@ -35,7 +36,7 @@ module BreachMitigation
           # This is actually an unmasked token. This is expected if
           # you have just upgraded to masked tokens, but should stop
           # happening shortly after installing this gem
-          masked_token == real_csrf_token(session)
+          compare_with_real_token masked_token, session
 
         elsif masked_token.length == AUTHENTICITY_TOKEN_LENGTH * 2
           # Split the token into the one-time pad and the encrypted
@@ -44,7 +45,7 @@ module BreachMitigation
           encrypted_csrf_token = masked_token[AUTHENTICITY_TOKEN_LENGTH..-1]
           csrf_token = xor_byte_strings(one_time_pad, encrypted_csrf_token)
 
-          csrf_token == real_csrf_token(session)
+          compare_with_real_token csrf_token, session
 
         else
           false # Token is malformed
@@ -52,6 +53,11 @@ module BreachMitigation
       end
 
       private
+
+      def compare_with_real_token(token, session)
+        # Borrow a constant-time comparison from Rack
+        Rack::Utils.secure_compare(token, real_csrf_token(session))
+      end
 
       def real_csrf_token(session)
         session[:_csrf_token] ||= SecureRandom.base64(AUTHENTICITY_TOKEN_LENGTH)
