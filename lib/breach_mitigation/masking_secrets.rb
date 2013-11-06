@@ -32,8 +32,9 @@ module BreachMitigation
         # tokens that we've issued without error.
 
         if masked_token.length == AUTHENTICITY_TOKEN_LENGTH
-          # This is actually an unmasked token
-          Rails.logger.warn "WARNING: the client is using an unmasked authenticity token. This is expected if you have just upgraded to masked tokens, but if these messages continue long after the upgrade, then something fishy is going on."
+          # This is actually an unmasked token. This is expected if
+          # you have just upgraded to masked tokens, but should stop
+          # happening shortly after installing this gem
           masked_token == real_csrf_token(session)
 
         elsif masked_token.length == AUTHENTICITY_TOKEN_LENGTH * 2
