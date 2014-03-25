@@ -9,8 +9,8 @@ module BreachMitigation
     def call(env)
       status, headers, body = @app.call(env)
 
-      # Only pad HTML documents
-      if headers['Content-Type'] =~ /text\/html/ && env['rack.url_scheme'] == 'https'
+      # Only pad HTML/XHTML documents
+      if headers['Content-Type'] =~ /text\/x?html/ && env['rack.url_scheme'] == 'https'
         # Copy the existing response to a new object
         response = Rack::Response.new(body, status, headers)
 
