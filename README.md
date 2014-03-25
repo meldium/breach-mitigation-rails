@@ -40,6 +40,10 @@ And then execute:
 
     $ bundle
 
+The length-hiding can be disabled by doing:
+
+    Rails.application.config.exclude_breach_length_hiding = true
+
 For most Rails apps, that should be enough, but read on for the gory
 details...
 

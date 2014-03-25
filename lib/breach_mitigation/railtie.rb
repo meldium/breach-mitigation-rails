@@ -1,13 +1,15 @@
-require 'breach_mitigation/length_hiding'
 require 'breach_mitigation/masking_secrets'
 
 module BreachMitigation
   class Railtie < Rails::Railtie
     initializer "breach-mitigation-rails.insert_middleware" do |app|
-      if Rails.version.include?("3.0.")
-        app.config.middleware.use "BreachMitigation::LengthHiding"
-      else
-        app.config.middleware.insert_before "Rack::ETag", "BreachMitigation::LengthHiding"
+      if !app.config.respond_to?(:exclude_breach_length_hiding) || !app.config.exclude_breach_length_hiding
+        require 'breach_mitigation/length_hiding'
+        if Rails.version.include?("3.0.")
+          app.config.middleware.use "BreachMitigation::LengthHiding"
+        else
+          app.config.middleware.insert_before "Rack::ETag", "BreachMitigation::LengthHiding"
+        end
       end
     end
   end
